@@ -24,12 +24,13 @@ function getTasks($params) {
     $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
     
     $stmt = $db->prepare("SELECT wt.*, wi.title as instance_title, w.name as workflow_name, 
-        u.name as assignee_name, u2.name as creator_name 
+        u.name as assignee_name, u2.name as creator_name, u3.name as starter_name 
         FROM workflow_tasks wt 
         LEFT JOIN workflow_instances wi ON wt.instance_id = wi.id 
         LEFT JOIN workflows w ON wi.workflow_id = w.id 
         LEFT JOIN users u ON wt.assignee_id = u.id 
         LEFT JOIN users u2 ON wt.created_by = u2.id 
+        LEFT JOIN users u3 ON wi.started_by = u3.id 
         $whereClause ORDER BY wt.id DESC LIMIT ? OFFSET ?");
     foreach ($bindValues as $i => $val) {
         $stmt->bindValue($i + 1, $val);
@@ -42,11 +43,12 @@ function getTasks($params) {
     while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
         $row['instance'] = [
             'title' => $row['instance_title'],
-            'workflow' => ['name' => $row['workflow_name']]
+            'workflow' => ['name' => $row['workflow_name']],
+            'starter' => ['name' => $row['starter_name']]
         ];
         $row['assignee'] = ['name' => $row['assignee_name']];
         $row['creator'] = ['name' => $row['creator_name']];
-        unset($row['instance_title'], $row['workflow_name'], $row['assignee_name'], $row['creator_name']);
+        unset($row['instance_title'], $row['workflow_name'], $row['assignee_name'], $row['creator_name'], $row['starter_name']);
         $tasks[] = $row;
     }
     
@@ -79,11 +81,12 @@ function getCompletedTasks($userId, $params) {
     $offset = ($page - 1) * $pageSize;
     
     $stmt = $db->prepare("SELECT wt.*, wi.title as instance_title, w.name as workflow_name, 
-        u2.name as creator_name 
+        u2.name as creator_name, u3.name as starter_name 
         FROM workflow_tasks wt 
         LEFT JOIN workflow_instances wi ON wt.instance_id = wi.id 
         LEFT JOIN workflows w ON wi.workflow_id = w.id 
         LEFT JOIN users u2 ON wt.created_by = u2.id 
+        LEFT JOIN users u3 ON wi.started_by = u3.id 
         WHERE wt.assignee_id = ? AND wt.status IN (1, 2) 
         ORDER BY wt.completed_at DESC LIMIT ? OFFSET ?");
     $stmt->bindValue(1, $userId);
@@ -95,10 +98,11 @@ function getCompletedTasks($userId, $params) {
     while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
         $row['instance'] = [
             'title' => $row['instance_title'],
-            'workflow' => ['name' => $row['workflow_name']]
+            'workflow' => ['name' => $row['workflow_name']],
+            'starter' => ['name' => $row['starter_name']]
         ];
         $row['creator'] = ['name' => $row['creator_name']];
-        unset($row['instance_title'], $row['workflow_name'], $row['creator_name']);
+        unset($row['instance_title'], $row['workflow_name'], $row['creator_name'], $row['starter_name']);
         $tasks[] = $row;
     }
     

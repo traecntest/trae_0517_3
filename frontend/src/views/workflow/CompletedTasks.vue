@@ -4,7 +4,13 @@
       <el-table :data="tableData" v-loading="loading" border>
         <el-table-column type="index" width="60" label="序号" />
         <el-table-column prop="instance.title" label="流程标题" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="workflow.name" label="流程名称" width="150">
+          <template #default="{ row }">{{ row.instance?.workflow?.name }}</template>
+        </el-table-column>
         <el-table-column prop="node_name" label="节点名称" width="150" />
+        <el-table-column prop="creator.name" label="发起人" width="100">
+          <template #default="{ row }">{{ row.instance?.starter?.name }}</template>
+        </el-table-column>
         <el-table-column label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'">

@@ -13,7 +13,7 @@ function getInstances($params) {
         $bindValues[] = "%{$params['keyword']}%";
     }
     if (isset($params['status']) && $params['status'] !== '') {
-        $where[] = "status = ?";
+        $where[] = "wi.status = ?";
         $bindValues[] = $params['status'];
     }
     if (!empty($params['workflow_id'])) {

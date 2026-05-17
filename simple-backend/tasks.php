@@ -13,7 +13,7 @@ function getTasks($params) {
         $bindValues[] = $params['assignee_id'];
     }
     if (isset($params['status']) && $params['status'] !== '') {
-        $where[] = "status = ?";
+        $where[] = "wt.status = ?";
         $bindValues[] = $params['status'];
     }
     if (isset($params['instance_id'])) {

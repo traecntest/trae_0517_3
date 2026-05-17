@@ -25,7 +25,7 @@ function getWorkflows($params) {
         $bindValues[] = $keyword;
     }
     if (isset($params['status']) && $params['status'] !== '') {
-        $where[] = "status = ?";
+        $where[] = "w.status = ?";
         $bindValues[] = $params['status'];
     }
     if (isset($params['type']) && $params['type'] !== '') {

@@ -261,7 +261,21 @@ const handleUpdatePassword = async () => {
 }
 
 .sidebar-menu :deep(.el-sub-menu) {
-  background: #000c17;
+  background: #000c17 !important;
+}
+
+.sidebar-menu :deep(.el-sub-menu .el-menu-item) {
+  background: #000c17 !important;
+  color: #fff !important;
+}
+
+.sidebar-menu :deep(.el-sub-menu .el-menu-item:hover) {
+  background: #1f2d3d !important;
+}
+
+.sidebar-menu :deep(.el-sub-menu .el-menu-item.is-active) {
+  background: #409eff !important;
+  color: #fff !important;
 }
 
 .header {

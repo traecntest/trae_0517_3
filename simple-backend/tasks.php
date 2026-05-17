@@ -50,7 +50,7 @@ function getTasks($params) {
         $tasks[] = $row;
     }
     
-    $countStmt = $db->prepare("SELECT COUNT(*) as total FROM workflow_tasks $whereClause");
+    $countStmt = $db->prepare("SELECT COUNT(*) as total FROM workflow_tasks wt $whereClause");
     foreach ($bindValues as $i => $val) {
         $countStmt->bindValue($i + 1, $val);
     }

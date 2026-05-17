@@ -52,7 +52,7 @@ function getWorkflows($params) {
         $workflows[] = $row;
     }
     
-    $countStmt = $db->prepare("SELECT COUNT(*) as total FROM workflows $whereClause");
+    $countStmt = $db->prepare("SELECT COUNT(*) as total FROM workflows w $whereClause");
     foreach ($bindValues as $i => $val) {
         $countStmt->bindValue($i + 1, $val);
     }

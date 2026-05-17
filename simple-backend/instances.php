@@ -48,7 +48,7 @@ function getInstances($params) {
         $instances[] = $row;
     }
     
-    $countStmt = $db->prepare("SELECT COUNT(*) as total FROM workflow_instances $whereClause");
+    $countStmt = $db->prepare("SELECT COUNT(*) as total FROM workflow_instances wi $whereClause");
     foreach ($bindValues as $i => $val) {
         $countStmt->bindValue($i + 1, $val);
     }

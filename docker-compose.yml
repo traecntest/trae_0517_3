@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: lowcode_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lowcode_workflow
+      MYSQL_USER: lowcode
+      MYSQL_PASSWORD: lowcode
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - lowcode-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lowcode_backend
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: lowcode_workflow
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - lowcode-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lowcode_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - lowcode-network
+
+volumes:
+  mysql_data:
+
+networks:
+  lowcode-network:
+    driver: bridge

@@ -3,6 +3,10 @@ function base64url_encode($data) {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
 
+function base64url_decode($data) {
+    return base64_decode(strtr($data, '-_', '+/') . str_repeat('=', 3 - (3 + strlen($data)) % 4));
+}
+
 function generateJWT($payload) {
     $header = ['alg' => 'HS256', 'typ' => 'JWT'];
     $headerEncoded = base64url_encode(json_encode($header));
@@ -35,8 +39,24 @@ function verifyJWT($token) {
     return $payload;
 }
 
+function getRequestHeaders() {
+    $headers = [];
+    if (function_exists('getallheaders')) {
+        $headers = getallheaders();
+    }
+    if (empty($headers)) {
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $headers[$headerName] = $value;
+            }
+        }
+    }
+    return $headers;
+}
+
 function authenticate() {
-    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    $headers = getRequestHeaders();
     $authHeader = '';
     
     foreach ($headers as $key => $value) {
